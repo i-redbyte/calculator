@@ -7,6 +7,6 @@ enum class OperandType {
     PLUS,
     MINUS,
     STAR,
-    SLASH,
-    EXP,
+    DIV,
+    POW,
 }

@@ -2,7 +2,6 @@ import expression.*
 import operation.OperandType
 import operation.OperandType.*
 import operation.Operation
-import java.util.function.Supplier
 import kotlin.jvm.Throws
 
 class Parser(private val operations: List<Operation>) {
@@ -26,17 +25,17 @@ class Parser(private val operations: List<Operation>) {
 
     @Throws(ParseException::class)
     private fun parseBinary(
-        initialExpression: Supplier<Expression>,
-        repeatingExpression: Supplier<Expression>,
+        startExpression: () -> Expression,
+        repeatingExpression: () -> Expression,
         vararg types: OperandType
     ): Expression {
-        var expression: Expression = initialExpression.get()
+        var expression: Expression = startExpression()
         while (match(*types)) {
             if (isEnd()) {
                 throw ParseException("Missing right-hand side(RHS) of binary expression.")
             }
             val p = previous()
-            expression = BinaryExpression(expression, repeatingExpression.get(), p)
+            expression = BinaryExpression(expression, repeatingExpression(), p)
         }
         return expression
     }

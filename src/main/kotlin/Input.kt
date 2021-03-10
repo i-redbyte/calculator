@@ -3,6 +3,7 @@ import operation.OperandType.*
 import operation.Operation
 import java.lang.RuntimeException
 
+// FIXME: 11.03.2021 Rename class
 class Input(
     private val input: String
 ) {

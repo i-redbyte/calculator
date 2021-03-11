@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.31"
-//    kotlin("kapt")
     id("org.jetbrains.kotlin.kapt") version "1.4.31"
     application
 }

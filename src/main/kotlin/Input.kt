@@ -1,7 +1,6 @@
 import operation.OperandType
 import operation.OperandType.*
 import operation.Operation
-import java.lang.RuntimeException
 
 // FIXME: 11.03.2021 Rename class
 class Input(
@@ -15,6 +14,7 @@ class Input(
     private val isAtEnd: Boolean
         get() = current >= input.length
 
+    // FIXME: при невалидном инпуте кидает ошибку. Тут либо @Throws, либо оборачивать.
     fun scanOperations(): List<Operation> {
         while (isAtEnd.not()) {
             start = current
@@ -71,4 +71,5 @@ class Input(
 
 }
 
-class UnknownCharacterException(symbol: Char) : RuntimeException("Unknown symbol in input string: $symbol")
+class UnknownCharacterException(symbol: Char) :
+    RuntimeException("Unknown symbol in input string: $symbol")

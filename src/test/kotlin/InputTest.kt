@@ -5,7 +5,6 @@ import org.junit.Test
 
 class InputTest {
 
-    /** Тупой тест, просто, чтобы показать подход given/when/then */
     @Test
     fun `general test`() {
         // given valid raw input
@@ -20,7 +19,7 @@ class InputTest {
 
     @Test
     fun `invalid symbol test`() {
-        val invalidInput = "clear"
+        val invalidInput = "C++"
 
         val result: Either<Throwable, List<Operation>> = try {
             val r: List<Operation> = Input(invalidInput).scanOperations()
@@ -28,9 +27,7 @@ class InputTest {
         } catch (e: UnknownCharacterException) {
             Either.left(e)
         }
-
         Truth.assertThat(result is Either.Left)
     }
 
-    // TODO: докинуть тестов, чтобы покрыть весь [Input]
 }

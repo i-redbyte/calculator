@@ -9,7 +9,7 @@ class Input(
 ) {
     private var start = 0
     private var current = 0
-    private val scannedTokens = mutableListOf<Operation>()
+    private val scannedOperations = mutableListOf<Operation>()
     private val currentSubstring: String
         get() = input.substring(start, current)
     private val isAtEnd: Boolean
@@ -21,7 +21,7 @@ class Input(
             start = current
             scanOperation()
         }
-        return scannedTokens
+        return scannedOperations
     }
 
     private fun scanOperation() {
@@ -63,7 +63,7 @@ class Input(
     }
 
     private fun addOperation(type: OperandType, value: Any?) {
-        scannedTokens.add(newToken(type, value))
+        scannedOperations.add(newToken(type, value))
     }
 
     private fun newToken(type: OperandType, value: Any?): Operation {

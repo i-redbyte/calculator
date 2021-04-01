@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     var inputString = readLine()
     while (inputString.isNullOrEmpty().not()) {
         try {
-            val operations = Input(inputString.orEmpty()).scanOperations()
+            val operations = TokenScanner(inputString.orEmpty()).scanOperations()
             val result = Parser(operations).parse()
             println("Result: ${result.evaluate()}")
         } catch (exception: Exception) {

@@ -3,7 +3,7 @@ import com.google.common.truth.Truth
 import operation.Operation
 import org.junit.Test
 
-class InputTest {
+class ScannerTest {
 
     @Test
     fun `general test`() {
@@ -11,7 +11,7 @@ class InputTest {
         val rawInput = "(1^2 + 3^3) / 4"
 
         // when creating Input
-        val input = Input(rawInput)
+        val input = TokenScanner(rawInput)
 
         // assert object is created
         Truth.assertThat(input).isNotNull()
@@ -22,7 +22,7 @@ class InputTest {
         val invalidInput = "C++"
 
         val result: Either<Throwable, List<Operation>> = try {
-            val r: List<Operation> = Input(invalidInput).scanOperations()
+            val r: List<Operation> = TokenScanner(invalidInput).scanOperations()
             Either.right(r)
         } catch (e: UnknownCharacterException) {
             Either.left(e)

@@ -3,8 +3,7 @@ import operation.OperandType.*
 import operation.Operation
 import kotlin.jvm.Throws
 
-// FIXME: 11.03.2021 Rename class
-class Input(
+class TokenScanner(
     private val input: String
 ) {
     private var start = 0

@@ -1,7 +1,7 @@
 package operation
 
-data class Operation(
-    val type: OperandType,
+data class Token(
+    val type: TokenType,
     val lexeme: String,
     val value: Any?,
 )

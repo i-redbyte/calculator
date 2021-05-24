@@ -1,10 +1,10 @@
 import expression.*
-import operation.OperandType
-import operation.OperandType.*
-import operation.Operation
+import operation.TokenType
+import operation.TokenType.*
+import operation.Token
 import kotlin.jvm.Throws
 
-class Parser(private val operations: List<Operation>) {
+class Parser(private val tokens: List<Token>) {
     private var current = 0
 
     fun parse(): Expression {
@@ -27,7 +27,7 @@ class Parser(private val operations: List<Operation>) {
     private fun parseBinary(
         startExpression: () -> Expression,
         repeatingExpression: () -> Expression,
-        vararg types: OperandType
+        vararg types: TokenType
     ): Expression {
         var expression: Expression = startExpression()
         while (match(*types)) {
@@ -51,7 +51,7 @@ class Parser(private val operations: List<Operation>) {
         throw ParseException("Number or parenthesis expected " + peek().lexeme)
     }
 
-    private fun match(vararg types: OperandType): Boolean {
+    private fun match(vararg types: TokenType): Boolean {
         for (type in types) {
             if (check(type)) {
                 advance()
@@ -61,15 +61,15 @@ class Parser(private val operations: List<Operation>) {
         return false
     }
 
-    private fun check(type: OperandType): Boolean =
+    private fun check(type: TokenType): Boolean =
         if (isEnd()) false
         else peek().type == type
 
-    private fun isEnd(): Boolean = current >= operations.size
+    private fun isEnd(): Boolean = current >= tokens.size
 
-    private fun advance(): Operation = operations[current++]
+    private fun advance(): Token = tokens[current++]
 
-    private fun peek(): Operation = operations[current]
+    private fun peek(): Token = tokens[current]
 
-    private fun previous(): Operation = operations[current - 1]
+    private fun previous(): Token = tokens[current - 1]
 }

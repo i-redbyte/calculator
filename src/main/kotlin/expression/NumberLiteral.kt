@@ -1,12 +1,12 @@
 package expression
 
-import operation.Operation
+import operation.Token
 
-class NumberLiteral(private val operation: Operation) : Expression {
+class NumberLiteral(private val token: Token) : Expression {
 
-    override fun evaluate(): Int = operation.value as Int
+    override fun evaluate(): Int = token.value as Int
 
     override fun toString(): String {
-        return "${(operation.value as Int)}"
+        return "${(token.value as Int)}"
     }
 }

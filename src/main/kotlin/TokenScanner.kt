@@ -1,6 +1,6 @@
-import operation.OperandType
-import operation.OperandType.*
-import operation.Operation
+import operation.TokenType
+import operation.TokenType.*
+import operation.Token
 import kotlin.jvm.Throws
 
 class TokenScanner(
@@ -8,31 +8,31 @@ class TokenScanner(
 ) {
     private var start = 0
     private var current = 0
-    private val scannedOperations = mutableListOf<Operation>()
+    private val scannedTokens = mutableListOf<Token>()
     private val currentSubstring: String
         get() = input.substring(start, current)
     private val isAtEnd: Boolean
         get() = current >= input.length
 
     @Throws
-    fun scanOperations(): List<Operation> {
+    fun scanOperations(): List<Token> {
         while (isAtEnd.not()) {
             start = current
-            scanOperation()
+            scan()
         }
-        return scannedOperations
+        return scannedTokens
     }
 
-    private fun scanOperation() {
+    private fun scan() {
         when (val symbol = advance()) {
             ' ', '\t', '\r', '\n' -> Unit
-            '(' -> addOperation(LEFT_PARENTHESE)
-            ')' -> addOperation(RIGHT_PARENTHESE)
-            '+' -> addOperation(PLUS)
-            '-' -> addOperation(MINUS)
-            '*' -> addOperation(STAR)
-            '/' -> addOperation(DIV)
-            '^' -> addOperation(POW)
+            '(' -> addToken(LEFT_PARENTHESE)
+            ')' -> addToken(RIGHT_PARENTHESE)
+            '+' -> addToken(PLUS)
+            '-' -> addToken(MINUS)
+            '*' -> addToken(STAR)
+            '/' -> addToken(DIV)
+            '^' -> addToken(POW)
             else ->
                 if (Character.isDigit(symbol)) {
                     addNumber()
@@ -54,19 +54,19 @@ class TokenScanner(
         while (isAtEnd.not() && Character.isDigit(peek())) {
             advance()
         }
-        addOperation(NUMBER, currentSubstring.toInt())
+        addToken(NUMBER, currentSubstring.toInt())
     }
 
-    private fun addOperation(type: OperandType) {
-        addOperation(type, null)
+    private fun addToken(type: TokenType) {
+        addToken(type, null)
     }
 
-    private fun addOperation(type: OperandType, value: Any?) {
-        scannedOperations.add(newToken(type, value))
+    private fun addToken(type: TokenType, value: Any?) {
+        scannedTokens.add(newToken(type, value))
     }
 
-    private fun newToken(type: OperandType, value: Any?): Operation {
-        return Operation(type, currentSubstring, value)
+    private fun newToken(type: TokenType, value: Any?): Token {
+        return Token(type, currentSubstring, value)
     }
 
 }

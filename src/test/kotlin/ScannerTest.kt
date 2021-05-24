@@ -1,6 +1,6 @@
 import arrow.core.Either
 import com.google.common.truth.Truth
-import operation.Operation
+import operation.Token
 import org.junit.Test
 
 class ScannerTest {
@@ -21,8 +21,8 @@ class ScannerTest {
     fun `invalid symbol test`() {
         val invalidInput = "C++"
 
-        val result: Either<Throwable, List<Operation>> = try {
-            val r: List<Operation> = TokenScanner(invalidInput).scanOperations()
+        val result: Either<Throwable, List<Token>> = try {
+            val r: List<Token> = TokenScanner(invalidInput).scanOperations()
             Either.right(r)
         } catch (e: UnknownCharacterException) {
             Either.left(e)

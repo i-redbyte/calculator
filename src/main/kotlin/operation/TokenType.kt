@@ -1,6 +1,6 @@
 package operation
 
-enum class OperandType {
+enum class TokenType {
     NUMBER,
     LEFT_PARENTHESE,
     RIGHT_PARENTHESE,

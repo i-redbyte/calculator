@@ -1,19 +1,15 @@
-import java.lang.Exception
+import eval.evaluate
+import lexer.tokenize
+import parser.parse
 
-fun main(args: Array<String>) {
-    println("Enter an empty line to exit")
-    print(">>> ")
-    var inputString = readLine()
-    while (inputString.isNullOrEmpty().not()) {
-        try {
-            val operations = TokenScanner(inputString.orEmpty()).scanOperations()
-            val result = Parser(operations).parse()
-            println("Result: ${result.evaluate()}")
-        } catch (exception: Exception) {
-            println("Ooh! Fail: ${exception.message}")
-        }
+fun main() {
+    generateSequence {
         print(">>> ")
-        inputString = readLine()
-    }
-    println("Good bye!")
+        readLine()
+    }.takeWhile { it.isNotBlank() }
+        .map { input -> tokenize(input) }
+        .map { tokens -> parse(tokens).first }
+        .map { expr -> evaluate(expr) }
+        .forEach { result -> println("Result: $result") }
+    println("Goodbye!")
 }

@@ -1,4 +1,10 @@
-package operation
+package lexer
+
+data class Token(
+    val type: TokenType,
+    val lexeme: String,
+    val value: Any?,
+)
 
 enum class TokenType {
     NUMBER,

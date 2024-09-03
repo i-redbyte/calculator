@@ -1,33 +1,45 @@
-import arrow.core.Either
-import com.google.common.truth.Truth
-import operation.Token
-import org.junit.Test
+import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import exceptions.UnknownCharacterException
+import lexer.Token
+import lexer.TokenType
+import lexer.tokenize
 
 class ScannerTest {
 
     @Test
     fun `general test`() {
-        // given valid raw input
         val rawInput = "(1^2 + 3^3) / 4"
+        val tokens = tokenize(rawInput)
+        assertThat(tokens).isNotNull()
+        assertThat(tokens).isNotEmpty()
 
-        // when creating Input
-        val input = TokenScanner(rawInput)
-
-        // assert object is created
-        Truth.assertThat(input).isNotNull()
+        val expectedTokens = listOf(
+            Token(TokenType.LEFT_PARENTHESE, "(", null),
+            Token(TokenType.NUMBER, "1", 1),
+            Token(TokenType.POW, "^", null),
+            Token(TokenType.NUMBER, "2", 2),
+            Token(TokenType.PLUS, "+", null),
+            Token(TokenType.NUMBER, "3", 3),
+            Token(TokenType.POW, "^", null),
+            Token(TokenType.NUMBER, "3", 3),
+            Token(TokenType.RIGHT_PARENTHESE, ")", null),
+            Token(TokenType.DIV, "/", null),
+            Token(TokenType.NUMBER, "4", 4)
+        )
+        assertThat(tokens).isEqualTo(expectedTokens)
     }
 
     @Test
     fun `invalid symbol test`() {
         val invalidInput = "C++"
 
-        val result: Either<Throwable, List<Token>> = try {
-            val r: List<Token> = TokenScanner(invalidInput).scanOperations()
-            Either.right(r)
-        } catch (e: UnknownCharacterException) {
-            Either.left(e)
+        val exception = assertThrows<UnknownCharacterException> {
+            tokenize(invalidInput)
         }
-        Truth.assertThat(result is Either.Left)
-    }
 
+        assertThat(exception).hasMessageThat().isEqualTo("Unknown symbol in input string: C")
+    }
 }
+

@@ -3,6 +3,7 @@ import lexer.tokenize
 import parser.parse
 
 fun main() {
+    println("Enter an empty line to exit")
     generateSequence {
         print(">>> ")
         readLine()

@@ -18,18 +18,23 @@ fun parseBinary(
     tokens: List<Token>,
     ops: List<TokenType>
 ): Pair<Expr, List<Token>> {
-    var (expr, remainingTokens) = nextPrecedence(tokens)
-
-    while (remainingTokens.isNotEmpty() && remainingTokens.first().type in ops) {
+    tailrec fun processBinaryExpression(
+        expr: Expr,
+        remainingTokens: List<Token>
+    ): Pair<Expr, List<Token>> {
+        if (remainingTokens.isEmpty() || remainingTokens.first().type !in ops) {
+            return expr to remainingTokens
+        }
         val op = remainingTokens.first().type.toOp()
-        remainingTokens = remainingTokens.drop(1)
-        val (right, newRemainingTokens) = nextPrecedence(remainingTokens)
-        expr = Expr.Binary(expr, right, op)
-        remainingTokens = newRemainingTokens
+        val newRemainingTokens = remainingTokens.drop(1)
+        val (rightExpr, newTokensAfterRight) = nextPrecedence(newRemainingTokens)
+        val newExpr = Expr.Binary(expr, rightExpr, op)
+        return processBinaryExpression(newExpr, newTokensAfterRight)
     }
-    return expr to remainingTokens
-}
 
+    val (initialExpr, remainingTokens) = nextPrecedence(tokens)
+    return processBinaryExpression(initialExpr, remainingTokens)
+}
 fun primary(tokens: List<Token>): Pair<Expr, List<Token>> = when (val token = tokens.firstOrNull()) {
     is Token -> when (token.type) {
         TokenType.NUMBER -> Expr.Literal(token.value as Int) to tokens.drop(1)

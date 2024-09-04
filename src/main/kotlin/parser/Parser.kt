@@ -46,10 +46,13 @@ fun primary(tokens: List<Token>): Pair<Expr, List<Token>> =
                         ?.let { Expr.Grouping(expr) to remainingTokens.drop(1) }
                         ?: throw ParseException("Expected ')' after expression.")
                 }
+            TokenType.MINUS -> {
+                val (rightExpr, remainingTokens) = primary(tokens.drop(1))
+                Expr.Unary(Op.Negate, rightExpr) to remainingTokens
+            }
             else -> throw ParseException("Unexpected token: $token")
         }
     } ?: throw ParseException("Unexpected end of input")
-
 
 fun pow(tokens: List<Token>): Pair<Expr, List<Token>> = parseBinary(::primary, tokens, listOf(TokenType.POW))
 

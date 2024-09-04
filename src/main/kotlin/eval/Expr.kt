@@ -1,5 +1,10 @@
 package eval
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import arrow.core.continuations.either
+import arrow.core.flatMap
 import exceptions.ParseException
 import kotlin.math.pow
 
@@ -19,30 +24,33 @@ sealed class Op {
     object Negate : Op()
 }
 
-fun evaluate(expr: Expr): Int = when (expr) {
-    is Expr.Literal -> expr.value
+fun evaluate(expr: Expr): Either<ParseException, Int> = when (expr) {
+    is Expr.Literal -> expr.value.right()
     is Expr.Grouping -> evaluate(expr.expr)
     is Expr.Binary -> evaluateBinary(expr.left, expr.right, expr.op)
     is Expr.Unary -> evaluateUnary(expr.op, expr.right)
 }
 
-fun evaluateBinary(left: Expr, right: Expr, op: Op): Int {
-    val leftValue = evaluate(left)
-    val rightValue = evaluate(right)
-    return when (op) {
-        Op.Plus -> leftValue + rightValue
-        Op.Minus -> leftValue - rightValue
-        Op.Multiply -> leftValue * rightValue
-        Op.Divide -> leftValue / rightValue
-        Op.Power -> leftValue.toDouble().pow(rightValue.toDouble()).toInt()
-        else -> throw ParseException("Unknown binary operator: $op")
+fun evaluateBinary(left: Expr, right: Expr, op: Op): Either<ParseException, Int> {
+    return evaluate(left).flatMap { leftValue ->
+        evaluate(right).flatMap { rightValue ->
+            when (op) {
+                Op.Plus -> Either.Right(leftValue + rightValue)
+                Op.Minus -> Either.Right(leftValue - rightValue)
+                Op.Multiply -> Either.Right(leftValue * rightValue)
+                Op.Divide -> Either.Right(leftValue / rightValue)
+                Op.Power -> Either.Right(leftValue.toDouble().pow(rightValue.toDouble()).toInt())
+                else -> Either.Left(ParseException("Unknown binary operator: $op"))
+            }
+        }
     }
 }
 
-fun evaluateUnary(op: Op, right: Expr): Int {
-    val rightValue = evaluate(right)
-    return when (op) {
-        Op.Negate -> -rightValue
-        else -> throw ParseException("Unknown unary operator: $op")
+fun evaluateUnary(op: Op, right: Expr): Either<ParseException, Int> {
+    return evaluate(right).flatMap { rightValue ->
+        when (op) {
+            Op.Negate -> Either.Right(-rightValue)
+            else -> Either.Left(ParseException("Unknown unary operator: $op"))
+        }
     }
 }

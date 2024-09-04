@@ -35,26 +35,29 @@ fun parseBinary(
     val (initialExpr, remainingTokens) = nextPrecedence(tokens)
     return processBinaryExpression(initialExpr, remainingTokens)
 }
-fun primary(tokens: List<Token>): Pair<Expr, List<Token>> = when (val token = tokens.firstOrNull()) {
-    is Token -> when (token.type) {
-        TokenType.NUMBER -> Expr.Literal(token.value as Int) to tokens.drop(1)
-        TokenType.LEFT_PARENTHESE -> {
-            val (expr, remainingTokens) = parse(tokens.drop(1))
-            if (remainingTokens.firstOrNull()?.type != TokenType.RIGHT_PARENTHESE) {
-                throw ParseException("Expected ')' after expression.")
-            }
-            Expr.Grouping(expr) to remainingTokens.drop(1)
+
+fun primary(tokens: List<Token>): Pair<Expr, List<Token>> =
+    tokens.firstOrNull()?.let { token ->
+        when (token.type) {
+            TokenType.NUMBER -> Expr.Literal(token.value as Int) to tokens.drop(1)
+            TokenType.LEFT_PARENTHESE -> parse(tokens.drop(1))
+                .let { (expr, remainingTokens) ->
+                    remainingTokens.firstOrNull()?.takeIf { it.type == TokenType.RIGHT_PARENTHESE }
+                        ?.let { Expr.Grouping(expr) to remainingTokens.drop(1) }
+                        ?: throw ParseException("Expected ')' after expression.")
+                }
+            else -> throw ParseException("Unexpected token: $token")
         }
-        else -> throw ParseException("Unexpected token: $token")
-    }
-    else -> throw ParseException("Unexpected end of input")
-}
+    } ?: throw ParseException("Unexpected end of input")
+
 
 fun pow(tokens: List<Token>): Pair<Expr, List<Token>> = parseBinary(::primary, tokens, listOf(TokenType.POW))
 
-fun mul(tokens: List<Token>): Pair<Expr, List<Token>> = parseBinary(::pow, tokens, listOf(TokenType.STAR, TokenType.DIV))
+fun mul(tokens: List<Token>): Pair<Expr, List<Token>> =
+    parseBinary(::pow, tokens, listOf(TokenType.STAR, TokenType.DIV))
 
-fun add(tokens: List<Token>): Pair<Expr, List<Token>> = parseBinary(::mul, tokens, listOf(TokenType.PLUS, TokenType.MINUS))
+fun add(tokens: List<Token>): Pair<Expr, List<Token>> =
+    parseBinary(::mul, tokens, listOf(TokenType.PLUS, TokenType.MINUS))
 
 fun parse(tokens: List<Token>): Pair<Expr, List<Token>> {
     return add(tokens)

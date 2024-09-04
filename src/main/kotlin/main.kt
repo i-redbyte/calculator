@@ -11,11 +11,9 @@ fun main() {
         readlnOrNull()
     }
         .takeWhile { it.isNotBlank() }
-        .map { input -> tokenize(input) }
-        .map { tokens -> parse(tokens) }
-        .map { eitherExpr ->
-            eitherExpr.flatMap { (expr, _) -> evaluate(expr) }
-        }
+        .map(::tokenize)
+        .map(::parse)
+        .map { it.flatMap { (expr, _) -> evaluate(expr) } }
         .forEach { result ->
             result.fold(
                 ifLeft = { error -> println("Error: ${error.message}") },

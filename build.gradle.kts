@@ -20,12 +20,12 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testImplementation("com.google.truth:truth:1.4.4")
+
 }
 
 tasks.test {
     useJUnitPlatform()
 }
-//tasks.withType<KotlinCompile> {
-//    kotlinOptions.jvmTarget = "1.8"
-//}
+
 
